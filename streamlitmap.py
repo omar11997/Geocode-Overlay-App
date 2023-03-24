@@ -6,6 +6,11 @@ import folium
 import requests
 
 
+# ////////////title ////////////////
+st.title("Geocoding & Overlay & Buffer App")
+
+
+
 # /////////////////// isert files ///////////////////
 uploaded_file = st.file_uploader("insert file", type = "geojson")
 uploaded_file2 = st.file_uploader("insert file 2 ", type= "geojson")
@@ -13,9 +18,9 @@ uploaded_file3 = st.file_uploader("insert file 3 (to buffer) ", type= "geojson")
 # uploaded_file4 = st.file_uploader("insert file4", type= "geojson")
 
 
-address = st.text_input("Enter an address :")
+address = st.text_input("Enter an address : ")
 
-st.title("Geocoding & Overlay App")
+
 
 if uploaded_file and uploaded_file2 and uploaded_file3:
     # //////////////// read files data /////////////////////
@@ -31,19 +36,20 @@ if uploaded_file and uploaded_file2 and uploaded_file3:
     # /////////////// buffer creation//////////////////
     # buffer = filedata3['geometry'].buffer(1000)
     # buffer_gdf = gdp.GeoDataFrame(geometry = buffer)
-    # /////////////////////////////////////////////////
-    buffer = filedata3["geometry"].buffer(2000)
-    map_buffer= gdp.GeoDataFrame(filedata3,geometry =buffer )
-    # ///////////////coloring ////////////////////
-    # fig, ax = plt.subplots()
-    # overlay.plot(ax=ax , color = "blue", edgecolor ="black")
-    # area = filedata1["geometry"].area
-    # map_area= gdp.GeoDataFrame(filedata1,geometry =area )
-
-    
-    # ////////////// map Creation /////////////
     m = leafmap.Map()
-
+    # /////////////////////////////////////////////////
+    length = st.text_input("Enter Distance of buffer:")
+    st.write("The Defult value of Buffer 5Km")
+    bu=st.button("make buffer")
+    if bu :
+        if not length:
+            length = 3000
+        buffer = filedata3["geometry"].buffer(2000)
+        map_buffer= gdp.GeoDataFrame(filedata3,geometry =buffer )
+        m.add_gdf(map_buffer)
+    # ////////////// map Creation /////////////
+    
+    
     # ////////// Adding data to Map //////////////
     m.add_gdf(filedata1,style_function=lambda feature: {
                   "fillColor": "green",
@@ -64,16 +70,8 @@ if uploaded_file and uploaded_file2 and uploaded_file3:
                   "fillOpacity": 0.5,
               })
     # m.add_gdf(buffer_gdf)
-    m.add_gdf(map_buffer)
+    
     m.to_streamlit(height=500)
-    # m.add_gdf(join,style_function=lambda feature: {
-    #               "fillColor": "yellow",
-    #               "color": "black",
-    #               "weight": 1,
-    #               "fillOpacity": 0.5,
-    #           })
-   
-
 if address:
     try:
         response = requests.get("https://nominatim.openstreetmap.org/search", params={"q": address, "format": "json"})
@@ -82,8 +80,8 @@ if address:
         lon = location["lon"]
         map = leafmap.Map(location=[lat, lon], zoom_start=5)
         map.to_streamlit(height=500)
-        # folium.Marker([lat, lon],popup=address,size = 20).add_to(map)
-        folium.Marker([lat, lon]).add_to(map)
+        folium.Marker([lat, lon],popup=address).add_to(map)
+        # folium.Marker([lat, lon]).add_to(map)
     except:
         print("this address is not found ")
     
