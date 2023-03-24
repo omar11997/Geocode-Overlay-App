@@ -36,6 +36,7 @@ if uploaded_file and uploaded_file2 and uploaded_file3:
     # /////////////// buffer creation//////////////////
     # buffer = filedata3['geometry'].buffer(1000)
     # buffer_gdf = gdp.GeoDataFrame(geometry = buffer)
+    # ////////////// map Creation /////////////
     m = leafmap.Map()
     # /////////////////////////////////////////////////
     length = st.text_input("Enter Distance of buffer:")
@@ -44,10 +45,10 @@ if uploaded_file and uploaded_file2 and uploaded_file3:
     if bu :
         if not length:
             length = 3000
-        buffer = filedata3["geometry"].buffer(2000)
+        buffer = filedata3["geometry"].buffer(length)
         map_buffer= gdp.GeoDataFrame(filedata3,geometry =buffer )
         m.add_gdf(map_buffer)
-    # ////////////// map Creation /////////////
+    
     
     
     # ////////// Adding data to Map //////////////
